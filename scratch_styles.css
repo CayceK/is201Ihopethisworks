@@ -1,0 +1,66 @@
+body {
+    margin:20px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: rgb(58, 58, 58);
+    background-color: rgb(247, 228, 204);
+}
+.book_list {margin-top: 100px;
+    
+}
+
+.title {
+    position: relative;
+    text-align: center;
+}
+
+.hogwarts_crest {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 140px;
+    height: auto;
+}
+
+li {
+    margin-bottom: 25px
+}
+
+.trailer_link {
+    text-align: center;
+
+}
+.book_links {
+    text-align:center;
+}
+
+
+.book_links a {
+    margin: 0 20px;
+
+}
+.paragraph {
+    text-align: center;
+    margin-top: 100px;
+
+}
+.tableau_link {
+    text-align: center;
+
+}
+
+.book_links a:link,
+.book_links a:visited,
+.footer a:link,
+.footer a:visited {
+    color: rgba(177, 93, 230, 0.814);
+    text-decoration: none;
+}
+
+.book_links a:hover,
+.footer a:hover {
+    color: rgb(198, 169, 1);
+    text-decoration: underline;
+}
+.footer{
+    text-align:center;
+}

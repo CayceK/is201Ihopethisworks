@@ -1,0 +1,21 @@
+#sideNav {
+    background-color: rgb(41, 93, 247) !important;
+}
+.text-primary {
+    color:  rgb(41, 93, 247) !important;
+}
+
+/* Make links blue (email, etc.) */
+a {
+    color: rgb(41, 93, 247) !important;
+}
+
+/* Keep social icons white */
+.social-icons a {
+    color: white !important;
+}
+
+/* Fix sidebar nav links */
+.navbar .nav-link {
+    color: white !important;
+}

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harry Potter Trivia Challenge</title>
+  <style>
+    body {
+      margin: 20px;
+      font-family: Georgia, "Times New Roman", Times, serif;
+      color: rgb(58, 58, 58);
+      background-color: rgb(247, 228, 204);
+    }
+
+    .app {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .title {
+      position: relative;
+      text-align: center;
+      margin-bottom: 30px;
+      padding-right: 170px;
+    }
+
+    .title h1 {
+      color: rgb(58, 58, 58);
+      margin-bottom: 10px;
+    }
+
+    .hogwarts_crest {
+      position: absolute;
+      top: 0;
+      right: -60px;
+      width: 140px;
+      height: auto;
+    }
+
+    .intro {
+      text-align: center;
+      margin: 80px auto 30px auto;
+      max-width: 800px;
+      line-height: 1.5;
+      font-size: 18px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .quiz_box {
+      text-align: center;
+      background-color: rgba(255, 248, 235, 0.75);
+      border: 2px solid rgba(172, 15, 41, 0.25);
+      border-radius: 14px;
+      padding: 30px;
+    }
+
+    .question_counter {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .difficulty {
+      font-weight: bold;
+      margin-bottom: 18px;
+      color: rgba(172, 15, 41, 0.814);
+    }
+
+    .question {
+      font-size: 28px;
+      line-height: 1.4;
+      margin-bottom: 25px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .answer_btn {
+      padding: 16px;
+      font-size: 18px;
+      font-family: Georgia, "Times New Roman", Times, serif;
+      background-color: rgb(255, 243, 225);
+      border: 2px solid rgba(172, 15, 41, 0.4);
+      border-radius: 10px;
+      cursor: pointer;
+      color: rgb(58, 58, 58);
+    }
+
+    .answer_btn:hover:not(:disabled) {
+      background-color: rgb(244, 232, 211);
+    }
+
+    .answer_btn:disabled {
+      cursor: default;
+    }
+
+    .correct {
+      background-color: rgb(201, 236, 196) !important;
+      border-color: rgb(76, 142, 69) !important;
+    }
+
+    .wrong {
+      background-color: rgb(245, 204, 204) !important;
+      border-color: rgb(181, 70, 70) !important;
+    }
+
+    .feedback {
+      min-height: 32px;
+      margin-top: 25px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .controls {
+      margin-top: 25px;
+    }
+
+    .control_btn {
+      padding: 14px 22px;
+      font-size: 17px;
+      font-family: Georgia, "Times New Roman", Times, serif;
+      background-color: rgba(177, 93, 230, 0.814);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 0 8px;
+    }
+
+    .control_btn:hover {
+      background-color: rgba(150, 70, 205, 0.9);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .end_message {
+      margin-top: 25px;
+      font-size: 22px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 35px;
+    }
+
+    .footer a:link,
+    .footer a:visited {
+      color: rgba(177, 93, 230, 0.814);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .footer a:hover {
+      color: rgb(198, 169, 1);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 750px) {
+      .answers {
+        grid-template-columns: 1fr;
+      }
+
+      .question {
+        font-size: 22px;
+      }
+
+      .title {
+        padding-right: 110px;
+      }
+
+      .hogwarts_crest {
+        width: 100px;
+        right: 0;
+        top: 5px;
+      }
+
+      .intro {
+        margin-top: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="title">
+      <h1>Harry Potter Trivia Challenge</h1>
+      <img src="Hogwarts_Crest.jpg" class="hogwarts_crest" alt="Hogwarts Crest">
+    </div>
+
+    <div class="intro">
+      Test your Harry Potter knowledge with 10 multiple-choice trivia questions that get harder as you answer correctly.
+    </div>
+
+    <div class="stats">
+      <div>Score: <span id="score">0</span></div>
+      <div>High Score: <span id="highScore">0</span></div>
+      <div>Question: <span id="questionNumber">0</span>/10</div>
+      <div>Difficulty: <span id="currentDifficulty">Medium</span></div>
+    </div>
+
+    <div class="quiz_box">
+      <div class="question_counter" id="questionCounter">Question 0 of 10</div>
+      <div class="difficulty" id="difficultyLabel">Difficulty: Medium</div>
+      <div class="question" id="questionText">Press Start to begin your Harry Potter quiz.</div>
+
+      <div class="answers" id="answersContainer"></div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="controls">
+        <button class="control_btn" id="startBtn">Start Quiz</button>
+        <button class="control_btn hidden" id="nextBtn">Next Question</button>
+        <button class="control_btn hidden" id="restartBtn">Play Again</button>
+      </div>
+
+      <div class="end_message hidden" id="endMessage"></div>
+    </div>
+
+    <div class="footer">
+      <a href="New_Scratch_Page.html">Back to Main Harry Potter Page</a>
+    </div>
+  </div>
+
+  <script>
+    const questionPools = {
+      medium: [
+        {
+          difficulty: "Medium",
+          question: "What is the name of the three-headed dog that guards the trapdoor in Harry Potter and the Sorcerer's Stone?",
+          answers: ["Fluffy", "Muffin", "Fang", "Cyrus"],
+          correct: "Fluffy"
+        },
+        {
+          difficulty: "Medium",
+          question: "What is the core of Harry Potter's wand?",
+          answers: ["Dragon heartstring", "Unicorn hair", "Phoenix feather", "Veela hair"],
+          correct: "Phoenix feather"
+        },
+        {
+          difficulty: "Medium",
+          question: "What position does Harry play on the Gryffindor Quidditch team?",
+          answers: ["Keeper", "Beater", "Chaser", "Seeker"],
+          correct: "Seeker"
+        },
+        {
+          difficulty: "Medium",
+          question: "What magical platform does the Hogwarts Express leave from?",
+          answers: ["Platform 7", "Platform 9 3/4", "Platform 10", "Platform 12"],
+          correct: "Platform 9 3/4"
+        },
+        {
+          difficulty: "Medium",
+          question: "Which Hogwarts house is Harry Potter sorted into?",
+          answers: ["Slytherin", "Ravenclaw", "Hufflepuff", "Gryffindor"],
+          correct: "Gryffindor"
+        },
+        {
+          difficulty: "Medium",
+          question: "What prison is guarded by Dementors?",
+          answers: ["Nurmengard", "Azkaban", "Durmstrang", "Gringotts"],
+          correct: "Azkaban"
+        }
+      ],
+      hard: [
+        {
+          difficulty: "Hard",
+          question: "Who was the first victim of the basilisk fifty years before Harry opened the Chamber of Secrets?",
+          answers: ["Nearly Headless Nick", "James Potter", "Moaning Myrtle", "Peeves"],
+          correct: "Moaning Myrtle"
+        },
+        {
+          difficulty: "Hard",
+          question: "What spell is used to summon an object?",
+          answers: ["Lumos", "Expelliarmus", "Alohomora", "Accio"],
+          correct: "Accio"
+        },
+        {
+          difficulty: "Hard",
+          question: "What are the three Deathly Hallows?",
+          answers: [
+            "Elder Wand, Resurrection Stone, Invisibility Cloak",
+            "Sword of Gryffindor, Elder Wand, Marauder's Map",
+            "Resurrection Stone, Time-Turner, Invisibility Cloak",
+            "Elder Wand, Philosopher's Stone, Invisibility Cloak"
+          ],
+          correct: "Elder Wand, Resurrection Stone, Invisibility Cloak"
+        },
+        {
+          difficulty: "Hard",
+          question: "What is the name of Voldemort's snake?",
+          answers: ["Nagini", "Aragog", "Norberta", "Kreacher"],
+          correct: "Nagini"
+        },
+        {
+          difficulty: "Hard",
+          question: "What is the incantation for the unlocking charm?",
+          answers: ["Accio", "Alohomora", "Expecto Patronum", "Obliviate"],
+          correct: "Alohomora"
+        },
+        {
+          difficulty: "Hard",
+          question: "Who destroys Helga Hufflepuff's Cup?",
+          answers: ["Harry Potter", "Hermione Granger", "Ron Weasley", "Neville Longbottom"],
+          correct: "Hermione Granger"
+        }
+      ],
+      expert: [
+        {
+          difficulty: "Expert",
+          question: "What is the name of the fake locket Horcrux note-signing wizard who stole the real locket from the cave?",
+          answers: ["Barty Crouch", "Regulus Black", "Percival Graves", "Aberforth Dumbledore"],
+          correct: "Regulus Black"
+        },
+        {
+          difficulty: "Expert",
+          question: "What is the name of the house-elf who serves the Black family before working at Hogwarts?",
+          answers: ["Dobby", "Winky", "Kreacher", "Hokey"],
+          correct: "Kreacher"
+        },
+        {
+          difficulty: "Expert",
+          question: "What is the full name of the Half-Blood Prince?",
+          answers: ["Tom Marvolo Riddle", "Severus Snape", "Sirius Black", "Albus Dumbledore"],
+          correct: "Severus Snape"
+        },
+        {
+          difficulty: "Expert",
+          question: "What plant is used to restore those petrified by the basilisk?",
+          answers: ["Gillyweed", "Mandrake", "Devil's Snare", "Bubotuber"],
+          correct: "Mandrake"
+        },
+        {
+          difficulty: "Expert",
+          question: "Who kills Bellatrix Lestrange in the Battle of Hogwarts?",
+          answers: ["Hermione Granger", "Ginny Weasley", "Molly Weasley", "Luna Lovegood"],
+          correct: "Molly Weasley"
+        },
+        {
+          difficulty: "Expert",
+          question: "What is the name of the map that reveals every person and passageway at Hogwarts?",
+          answers: ["The Dark Detector", "The Hogwarts Ledger", "The Marauder's Map", "The Pensieve Chart"],
+          correct: "The Marauder's Map"
+        }
+      ]
+    };
+
+    const TOTAL_QUESTIONS = 10;
+    const HIGH_SCORE_KEY = "harryPotterTriviaHighScore";
+
+    let score = 0;
+    let questionCount = 0;
+    let currentQuestion = null;
+    let usedQuestions = [];
+
+    const scoreEl = document.getElementById("score");
+    const highScoreEl = document.getElementById("highScore");
+    const questionNumberEl = document.getElementById("questionNumber");
+    const currentDifficultyEl = document.getElementById("currentDifficulty");
+    const questionCounterEl = document.getElementById("questionCounter");
+    const difficultyLabelEl = document.getElementById("difficultyLabel");
+    const questionTextEl = document.getElementById("questionText");
+    const answersContainer = document.getElementById("answersContainer");
+    const feedbackEl = document.getElementById("feedback");
+    const startBtn = document.getElementById("startBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const endMessage = document.getElementById("endMessage");
+
+    function getHighScore() {
+      return Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
+    }
+
+    function setHighScore(newScore) {
+      localStorage.setItem(HIGH_SCORE_KEY, String(newScore));
+      highScoreEl.textContent = newScore;
+    }
+
+    function updateStats() {
+      scoreEl.textContent = score;
+      highScoreEl.textContent = getHighScore();
+      questionNumberEl.textContent = questionCount;
+    }
+
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getDifficultyForCurrentProgress() {
+      if (score >= 6) return "expert";
+      if (score >= 3) return "hard";
+      return "medium";
+    }
+
+    function getUnusedQuestionsByDifficulty(difficulty) {
+      return questionPools[difficulty].filter(q => !usedQuestions.includes(q.question));
+    }
+
+    function getNextQuestion() {
+      let difficulty = getDifficultyForCurrentProgress();
+      let pool = getUnusedQuestionsByDifficulty(difficulty);
+
+      if (pool.length === 0 && difficulty === "expert") {
+        pool = getUnusedQuestionsByDifficulty("hard");
+      }
+      if (pool.length === 0 && (difficulty === "expert" || difficulty === "hard")) {
+        pool = getUnusedQuestionsByDifficulty("medium");
+      }
+
+      if (pool.length === 0) return null;
+
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      usedQuestions.push(chosen.question);
+      return chosen;
+    }
+
+    function renderQuestion() {
+      feedbackEl.textContent = "";
+      endMessage.classList.add("hidden");
+      answersContainer.innerHTML = "";
+      nextBtn.classList.add("hidden");
+
+      if (questionCount >= TOTAL_QUESTIONS) {
+        finishQuiz();
+        return;
+      }
+
+      currentQuestion = getNextQuestion();
+
+      if (!currentQuestion) {
+        finishQuiz();
+        return;
+      }
+
+      questionCount += 1;
+      const currentDifficulty = currentQuestion.difficulty;
+
+      questionCounterEl.textContent = `Question ${questionCount} of ${TOTAL_QUESTIONS}`;
+      difficultyLabelEl.textContent = `Difficulty: ${currentDifficulty}`;
+      currentDifficultyEl.textContent = currentDifficulty;
+      questionTextEl.textContent = currentQuestion.question;
+
+      const shuffledAnswers = shuffleArray(currentQuestion.answers);
+
+      shuffledAnswers.forEach(answer => {
+        const button = document.createElement("button");
+        button.className = "answer_btn";
+        button.textContent = answer;
+        button.addEventListener("click", () => handleAnswer(button, answer));
+        answersContainer.appendChild(button);
+      });
+
+      updateStats();
+    }
+
+    function handleAnswer(button, selectedAnswer) {
+      const buttons = document.querySelectorAll(".answer_btn");
+      buttons.forEach(btn => btn.disabled = true);
+
+      const isCorrect = selectedAnswer === currentQuestion.correct;
+
+      if (isCorrect) {
+        score += 1;
+        button.classList.add("correct");
+        feedbackEl.textContent = "Correct. The next question will get harder if you keep this up.";
+      } else {
+        button.classList.add("wrong");
+        feedbackEl.textContent = `Incorrect. The correct answer was ${currentQuestion.correct}.`;
+        buttons.forEach(btn => {
+          if (btn.textContent === currentQuestion.correct) {
+            btn.classList.add("correct");
+          }
+        });
+      }
+
+      updateStats();
+
+      if (questionCount >= TOTAL_QUESTIONS) {
+        nextBtn.textContent = "See Results";
+      } else {
+        nextBtn.textContent = "Next Question";
+      }
+
+      nextBtn.classList.remove("hidden");
+    }
+
+    function finishQuiz() {
+      answersContainer.innerHTML = "";
+      questionTextEl.textContent = "Quiz complete.";
+      difficultyLabelEl.textContent = "Difficulty: Finished";
+      questionCounterEl.textContent = `Question ${TOTAL_QUESTIONS} of ${TOTAL_QUESTIONS}`;
+      currentDifficultyEl.textContent = "Finished";
+
+      const previousHigh = getHighScore();
+      let message = `You scored ${score} out of ${TOTAL_QUESTIONS}.`;
+
+      if (score > previousHigh) {
+        setHighScore(score);
+        message += " New high score!";
+      } else {
+        highScoreEl.textContent = previousHigh;
+      }
+
+      endMessage.textContent = message;
+      endMessage.classList.remove("hidden");
+      nextBtn.classList.add("hidden");
+      restartBtn.classList.remove("hidden");
+    }
+
+    function startQuiz() {
+      score = 0;
+      questionCount = 0;
+      usedQuestions = [];
+      currentQuestion = null;
+      startBtn.classList.add("hidden");
+      restartBtn.classList.add("hidden");
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      renderQuestion();
+    }
+
+    highScoreEl.textContent = getHighScore();
+
+    startBtn.addEventListener("click", startQuiz);
+    nextBtn.addEventListener("click", nextQuestion);
+    restartBtn.addEventListener("click", startQuiz);
+  </script>
+</body>
+</html>
